@@ -1,1 +1,3 @@
-# dec-hackathon
+### DEC HACKATHON
+
+## Introduction
