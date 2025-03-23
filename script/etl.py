@@ -4,7 +4,6 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import pandas as pd
-import logg
 
 
 # Setup retry strategy
@@ -19,7 +18,7 @@ def read_data(page=0):
     page: the current page of the api
     """
     # API parameters
-    API_KEY = os.environ.get('api_key', '')
+    API_KEY = os.environ.get('API_KEY', '')
     params = {
         "api_key": API_KEY,
         "fields": "id,school.name,school.city,school.state,school.zip,school.ownership,school.school_url,school.price_calculator_url,school.men_only,school.women_only,latest.admissions.admission_rate.overall,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,latest.earnings.10_yrs_after_entry.median,latest.admissions.sat_scores.average.overall",
