@@ -43,6 +43,16 @@ def read_data(page=0):
                 2: "Private Nonprofit",
                 3: "Private For-Profit"
             }
+            research_mapping= {
+                15: 1,
+                16: 2,
+                27: 3,
+                18: 4,
+                19: 5,
+                20: 6"
+            }
+            
+                  
             for result in results:
                 data = {
                     'id': result['id'],
@@ -59,7 +69,9 @@ def read_data(page=0):
                     'in_state_tution': result['latest.cost.tuition.in_state'],
                     'out_of_state_tution': result['latest.cost.tuition.out_of_state'],
                     'average_sat_scores': result['latest.admissions.sat_scores.average.overall'],
-                    'earnings_after_10_yrs_entry': result['latest.earnings.10_yrs_after_entry.median']
+                    'earnings_after_10_yrs_entry': result['latest.earnings.10_yrs_after_entry.median'],
+                    'reseach_output':research_mapping.get(result['school.carnegie_basic'], 7),
+                    'graduation_rate':result['latest.completion.completion_rate_4yr_150nt']
                 }
                 data_list.append(data)
             return data_list
