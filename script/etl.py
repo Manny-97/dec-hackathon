@@ -21,7 +21,7 @@ def read_data(page=0):
     API_KEY = os.environ.get('API_KEY', '')
     params = {
         "api_key": API_KEY,
-        "fields": "id,school.name,school.city,school.state,school.zip,school.ownership,school.school_url,school.price_calculator_url,school.men_only,school.women_only,latest.admissions.admission_rate.overall,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,latest.earnings.10_yrs_after_entry.median,latest.admissions.sat_scores.average.overall,latest.completion.completion_rate_4yr_150nt,latest.student.demographics.student_faculty_ratio,school.carnegie_basic,latest.student.demographics.race_ethnicity.non_resident_alien,latest.school.instructional_expenditure_per_fte,latest.school.tuition_revenue_per_fte,latest.school.endowment.end",
+        "fields": "id,school.name,school.city,school.state,school.zip,school.ownership,school.school_url,school.price_calculator_url,school.men_only,school.women_only,latest.admissions.admission_rate.overall,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,latest.earnings.10_yrs_after_entry.median,latest.admissions.sat_scores.average.overall,latest.completion.completion_rate_4yr_150nt,latest.student.demographics.student_faculty_ratio,school.carnegie_basic,latest.student.demographics.race_ethnicity.non_resident_alien,latest.school.instructional_expenditure_per_fte,latest.school.tuition_revenue_per_fte,latest.school.endowment.end,latest.student.retention_rate.four_year.full_time_pooled,latest.student.retention_rate.lt_four_year.full_time_pooled,latest.student.retention_rate.four_year.part_time_pooled,latest.student.retention_rate.lt_four_year.part_time_pooled",
         "per_page": 100,  
         "page": page
     }
@@ -51,7 +51,6 @@ def read_data(page=0):
                 19: 5,
                 20: 6"
             }
-            
                   
             for result in results:
                 data = {
@@ -76,7 +75,12 @@ def read_data(page=0):
                     'international_outlook':result['latest.student.demographics.race_ethnicity.non_resident_alien'],
                     'revenue_per_student':result['latest.school.tuition_revenue_per_fte'],
                     'spending_per_student':result['latest.school.instructional_expenditure_per_fte'],
-                    'endowment':result['latest.school.endowment.end']
+                    'endowment':result['latest.school.endowment.end'],
+                    'full_time_retention_rate':result['latest.student.retention_rate.four_year.full_time_pooled'],
+                    'full_time_less_than_4yrs_retention_rate':result['latest.student.retention_rate.lt_four_year.full_time_pooled'],
+                    'part_time_retention_rate':result['latest.student.retention_rate.four_year.part_time_pooled'],
+                    'part_time_less_than_4yrs_retention_rate':result['latest.student.retention_rate.lt_four_year.part_time_pooled']
+                    
                 }
                 data_list.append(data)
             return data_list
