@@ -21,7 +21,7 @@ def read_data(page=0):
     API_KEY = os.environ.get('API_KEY', '')
     params = {
         "api_key": API_KEY,
-        "fields": "id,school.name,school.city,school.state,school.zip,school.ownership,school.school_url,school.price_calculator_url,school.men_only,school.women_only,latest.admissions.admission_rate.overall,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,latest.earnings.10_yrs_after_entry.median,latest.admissions.sat_scores.average.overall",
+        "fields": "id,school.name,school.city,school.state,school.zip,school.ownership,school.school_url,school.price_calculator_url,school.men_only,school.women_only,latest.admissions.admission_rate.overall,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,latest.earnings.10_yrs_after_entry.median,latest.admissions.sat_scores.average.overall,latest.completion.completion_rate_4yr_150nt,latest.student.demographics.student_faculty_ratio,school.carnegie_basic,latest.student.demographics.race_ethnicity.non_resident_alien,latest.school.instructional_expenditure_per_fte,latest.school.tuition_revenue_per_fte,latest.school.endowment.end",
         "per_page": 100,  
         "page": page
     }
@@ -71,7 +71,12 @@ def read_data(page=0):
                     'average_sat_scores': result['latest.admissions.sat_scores.average.overall'],
                     'earnings_after_10_yrs_entry': result['latest.earnings.10_yrs_after_entry.median'],
                     'reseach_output':research_mapping.get(result['school.carnegie_basic'], 7),
-                    'graduation_rate':result['latest.completion.completion_rate_4yr_150nt']
+                    'graduation_rate':result['latest.completion.completion_rate_4yr_150nt'],
+                    'faculty_quality':result['latest.student.demographics.student_faculty_ratio'],
+                    'international_outlook':result['latest.student.demographics.race_ethnicity.non_resident_alien'],
+                    'revenue_per_student':result['latest.school.tuition_revenue_per_fte'],
+                    'spending_per_student':result['latest.school.instructional_expenditure_per_fte'],
+                    'endowment':result['latest.school.endowment.end']
                 }
                 data_list.append(data)
             return data_list
