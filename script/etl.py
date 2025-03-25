@@ -101,7 +101,7 @@ if __name__ == '__main__':
         exit(1)
         
 # Transformation layer
-columns=['graduation_rate','faculty_quality','international_outlook','revenue_per_student','spending_per_student','endowment','full_time_retention_rate','school_url','price_calculator','men_only','women_only','in_state_tution','out_of_state_tution','average_sat_scores','earnings_after_10_yrs_entry','financial_aid_percent']
+columns=['graduation_rate','faculty_quality','international_outlook','revenue_per_student','spending_per_student','endowment','full_time_retention_rate','school_url','price_calculator','men_only','women_only','in_state_tuition','out_of_state_tuition','average_sat_scores','earnings_after_10_yrs_entry','financial_aid_percent']
 df[columns]=df[columns].fillna(0)  #filling empty values with 0
 df["admission_rate"].fillna(1, inplace=True) #filling empty admission rate records with 1 instead because of priority to lower values
 df=df[df['admission_rate']!=0] # logic to filter out irrelevant records with very low admision rate
