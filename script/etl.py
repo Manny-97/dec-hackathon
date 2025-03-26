@@ -106,7 +106,7 @@ def read_data(page=0):
         data_list =[]
         for result in results:
             data = {
-                'id': result.get('id'),
+                'school_id': result.get('id'),
                 'name': result.get('school.name'),
                 'city': result.get('school.city'),
                 'state': result.get('school.state'),
@@ -119,8 +119,8 @@ def read_data(page=0):
                 'admission_rate': result.get('latest.admissions.admission_rate.overall'),
                 'in_state_tuition': result.get('latest.cost.tuition.in_state'),
                 'out_of_state_tuition': result.get('latest.cost.tuition.out_of_state'),
-                'average_sat_scores': result.get('latest.admissions.sat_scores.average.overall'),
-                'earnings_after_10_yrs_entry': result.get('latest.earnings.10_yrs_after_entry.median'),
+                'average_sat_score': result.get('latest.admissions.sat_scores.average.overall'),
+                'earnings_after_10yrs': result.get('latest.earnings.10_yrs_after_entry.median'),
                 'graduation_rate': result.get('latest.completion.completion_rate_4yr_150nt'),
                 'faculty_quality': result.get('latest.student.demographics.student_faculty_ratio'),
                 'international_outlook': result.get('latest.student.demographics.race_ethnicity.non_resident_alien'),
