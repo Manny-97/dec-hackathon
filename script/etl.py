@@ -131,7 +131,7 @@ def read_data(page=0):
                 'PROGRAM_TYPE':program_type_mapping.get(result.get('school.carnegie_undergrad'),'Unknown'),
                 'research_output': research_mapping.get(result.get('school.carnegie_basic'), 8),
             }
-                data_list.append(data)
+            data_list.append(data)
             return data_list
         else:
             print("Warning: Empty response received")
