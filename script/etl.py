@@ -14,6 +14,7 @@ retry = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 5
 adapter = HTTPAdapter(max_retries=retry)
 session.mount("https://", adapter)
 
+# EXTRACTION LAYER
 def read_data(page=0):
     """
     This function reads data from the collegescorecard api
@@ -157,4 +158,30 @@ if __name__ == '__main__':
         data.extend(result)
 
     df = pd.DataFrame(data)
-    df.to_csv("../data/college.csv")
+
+# TRANSFORMATION LAYER
+# Filter down to top 1000 based on criterias
+df_sorted = df.sort_values(
+    by=[
+        "research_output","admission_rate","graduation_rate","earnings_after_10_yrs_entry","faculty_quality",
+        "international_outlook", "revenue_per_student", "spending_per_student",
+        "endowment"
+    ],
+    ascending=[True,True, False,False, True, False, False, False, False],
+    na_position='last'
+)
+
+df_top_1000=pd.DataFrame(df_sorted.head(1000))
+
+columns=['price_calculator','in_state_tuition',
+         'out_of_state_tuition','average_sat_scores','earnings_after_10_yrs_entry',
+         'graduation_rate','international_outlook','revenue_per_student',
+         'spending_per_student','endowment','full_time_retention_rate','financial_aid_percent','faculty_quality']
+df_top_1000[columns]=df_top_1000[columns].fillna(0)
+df_top_1000['admission_rate'].fillna(1,inplace=True)
+
+# LOADING LAYER
+
+
+
+
