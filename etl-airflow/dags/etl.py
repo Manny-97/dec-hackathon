@@ -145,16 +145,20 @@ def transform_data(**kwargs):
 
     df_sorted = df.sort_values(
         by=[
-            "research_output",
-            "admission_rate",
-            "graduation_rate",
-            "earnings_after_10yrs",
+            "research_output","ADMISSION_RATE","GRADUATION_RATE","EARNINGS_AFTER_10YRS","faculty_quality",
+            "international_outlook", "revenue_per_student", "spending_per_student",
+            "endowment"
         ],
         ascending=[True, True, False, False],
     )
     df_top_1000 = df_sorted.head(1000)
     df_top_1000["rank"] = df_top_1000.index + 1
-
+    columns=['PRICE_CALCULATOR','IN_STATE_TUITION',
+             'OUT_OF_STATE_TUITION','AVERAGE_SAT_SCORE','EARNINGS_AFTER_10YRS',
+             'GRADUATION_RATE','international_outlook','revenue_per_student',
+             'spending_per_student','endowment','RETENTION_RATE','FINANCIAL_AID_PERCENT','faculty_quality']
+    df_top_1000[columns]=df_top_1000[columns].fillna(0)
+    df_top_1000['ADMISSION_RATE'].fillna(1,inplace=True)
     ti.xcom_push(key="transformed_data", value=df_top_1000.to_json())
 
 
