@@ -45,7 +45,6 @@ def read_data(page=0):
             print(f"Warning: Empty response received on page {page}")
             return None
         ownership_mapping = {1: "Public", 2: "Private Nonprofit", 3: "Private For-Profit"}
-        research_mapping = {15: 1, 16: 2, 27: 3, 18: 4, 19: 5, 20: 6} 
         program_type_mapping ={'0':'Exclusively Graduate',
                        '1':'higher part-time',
                        '2':'mixed part/full-time',
@@ -120,7 +119,6 @@ def read_data(page=0):
                 'out_of_state_tuition': result.get('latest.cost.tuition.out_of_state'),
                 'average_sat_scores': result.get('latest.admissions.sat_scores.average.overall'),
                 'earnings_after_10_yrs_entry': result.get('latest.earnings.10_yrs_after_entry.median'),
-                'research_output': research_mapping.get(result.get('school.carnegie_basic'), 7),
                 'graduation_rate': result.get('latest.completion.completion_rate_4yr_150nt'),
                 'faculty_quality': result.get('latest.student.demographics.student_faculty_ratio'),
                 'international_outlook': result.get('latest.student.demographics.race_ethnicity.non_resident_alien'),
