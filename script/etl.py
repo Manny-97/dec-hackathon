@@ -69,7 +69,7 @@ def read_data(page=0):
                    3:'less_than_2_years'
                               }
                   
-        program_category_mapping={0:'Not classified',
+        program_name_mapping={0:'Not classified',
                       1:'Associates Colleges: High Transfer-High Traditional',
                       3: 'Associates Colleges: High Transfer-High Nontraditional',
                       4: 'Associates Colleges: Mixed Transfer/Career & Technical-High Traditional',
@@ -127,9 +127,9 @@ def read_data(page=0):
                 'revenue_per_student': result.get('latest.school.tuition_revenue_per_fte'),
                 'spending_per_student': result.get('latest.school.instructional_expenditure_per_fte'),
                 'endowment': result.get('latest.school.endowment.end'),
-                'full_time_retention_rate': result.get('latest.student.retention_rate.four_year.full_time_pooled'),
+                'retention_rate': result.get('latest.student.retention_rate.four_year.full_time_pooled'),
                 'financial_aid_percent': result.get('latest.aid.pell_grant_rate'),
-                'program_category':program_category_mapping.get(result.get('school.carnegie_basic'),34),
+                'program_name':program_name_mapping.get(result.get('school.carnegie_basic'),34),
                 'duration':duration_mapping.get(result.get('school.carnegie_basic'),'Unknown'),
                 'program_type':program_type_mapping.get(result.get('school.carnegie_undergrad'),'Unknown'),
                 'research_output': research_mapping.get(result.get('school.carnegie_basic'), 8)
@@ -176,7 +176,7 @@ df_top_1000=pd.DataFrame(df_sorted.head(1000))
 columns=['price_calculator','in_state_tuition',
          'out_of_state_tuition','average_sat_scores','earnings_after_10_yrs_entry',
          'graduation_rate','international_outlook','revenue_per_student',
-         'spending_per_student','endowment','full_time_retention_rate','financial_aid_percent','faculty_quality']
+         'spending_per_student','endowment','retention_rate','financial_aid_percent','faculty_quality']
 df_top_1000[columns]=df_top_1000[columns].fillna(0)
 df_top_1000['admission_rate'].fillna(1,inplace=True)
 
