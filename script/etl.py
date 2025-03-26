@@ -24,8 +24,8 @@ def read_data(page=0):
     API_KEY = os.environ.get('API_KEY', '')
     params = {
         "api_key": API_KEY,
-        "fields": "id,school.name,school.city,school.state,school.zip,school.ownership,school.school_url,"
-                  "school.price_calculator_url,school.men_only,school.women_only,"
+        "fields": "id,school.name,school.city,school.state,school.ownership,school.school_url,"
+                  "school.price_calculator_url,"
                   "latest.admissions.admission_rate.overall,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,"
                   "latest.earnings.10_yrs_after_entry.median,latest.admissions.sat_scores.average.overall,"
                   "latest.completion.completion_rate_4yr_150nt,latest.student.demographics.student_faculty_ratio,"
