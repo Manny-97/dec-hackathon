@@ -179,6 +179,7 @@ columns=['price_calculator','in_state_tuition',
          'spending_per_student','endowment','retention_rate','financial_aid_percent','faculty_quality']
 df_top_1000[columns]=df_top_1000[columns].fillna(0)
 df_top_1000['admission_rate'].fillna(1,inplace=True)
+df_top_1000['rank'] = df_top_1000.index + 1  # Ensure universities are ranked properly
 
 # LOADING LAYER
 
