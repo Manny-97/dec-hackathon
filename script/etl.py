@@ -106,7 +106,7 @@ def read_data(page=0):
         data_list =[]
         for result in results:
             data = {
-                'school_id': result.get('id'),
+                'SCHOOL_ID': result.get('id'),
                 'name': result.get('school.name'),
                 'city': result.get('school.city'),
                 'state': result.get('school.state'),
