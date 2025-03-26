@@ -130,7 +130,7 @@ def read_data(page=0):
                 'retention_rate': result.get('latest.student.retention_rate.four_year.full_time_pooled'),
                 'financial_aid_percent': result.get('latest.aid.pell_grant_rate'),
                 'program_name':program_name_mapping.get(result.get('school.carnegie_basic'),34),
-                'duration':duration_mapping.get(result.get('school.carnegie_basic'),'Unknown'),
+                'duration':duration_mapping.get(result.get('school.institutional_characteristics.level'),'Unknown'),
                 'program_type':program_type_mapping.get(result.get('school.carnegie_undergrad'),'Unknown'),
                 'research_output': research_mapping.get(result.get('school.carnegie_basic'), 8)
                 }
