@@ -330,8 +330,3 @@ cur.execute(merge_query)
 conn.commit()  
 
 print("Update and merge operations completed successfully!")
-
-
-
-
-
