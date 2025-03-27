@@ -191,22 +191,132 @@ def load_to_snowflake(**kwargs):
             program_name VARCHAR(255) UNIQUE
         )
     """)
-    
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS dim_program_type (
             program_type_id INT AUTOINCREMENT PRIMARY KEY,
             program_type VARCHAR(255) UNIQUE
         )
     """)
-    print("Dimension tables created")
-    
-    # Load Data into Snowflake
-    from snowflake.connector.pandas_tools import write_pandas
-    success, _, _, _ = write_pandas(conn, df_top_1000, "STAGING_UNIVERSITY")
+    print("dimension tables created")
+
+    # Load DataFrame into a Snowflake temporary table and upsert into main table 
+    def upsert_dimension_table(table_name, df, key_column, value_column):
+        temp_table = f"staging_{table_name}"
+        
+        # Create Staging Table
+        cur.execute(f"CREATE OR REPLACE TEMP TABLE {temp_table} AS SELECT * FROM {table_name} WHERE 1=0")
+
+        # Load Data into Staging Table
+        for _, row in df.iterrows():
+            cur.execute(f"""
+                INSERT INTO {temp_table} ({value_column})
+                SELECT '{row[value_column]}' WHERE NOT EXISTS (
+                    SELECT 1 FROM {table_name} WHERE {value_column} = '{row[value_column]}'
+                )
+            """)
+
+        # Merge Data from Staging to Main Table
+        cur.execute(f"""
+            MERGE INTO {table_name} AS target
+            USING {temp_table} AS source
+            ON target.{value_column} = source.{value_column}
+            WHEN NOT MATCHED THEN INSERT ({value_column}) VALUES (source.{value_column});
+        """)
+
+    # Perform Upserts
+    upsert_dimension_table('dim_program', dim_program, 'program_id', 'PROGRAM_NAME')
+    upsert_dimension_table('dim_program_type', dim_program_type, 'program_type_id', 'PROGRAM_TYPE')
+    print("Dimension tables upsert successful!")
+
+    # MAP PROGRAM & PROGRAM TYPE IDs BACK TO OUR DF
+    df_top_1000 = df_top_1000.merge(dim_program, on='PROGRAM_NAME', how='left')
+    df_top_1000 = df_top_1000.merge(dim_program_type, on='PROGRAM_TYPE', how='left')
+
+    # UNIVERSITY FACT TABLE 
+    #Create staging table 
+    cur.execute("CREATE OR REPLACE TEMP TABLE staging_university AS SELECT * FROM university WHERE 1=0")
+
+    df_top_1000 = df_top_1000.reset_index(drop=True)
+
+    columns=['SCHOOL_ID','NAME','CITY','STATE','SCHOOL_URL','ADMISSION_RATE','PRICE_CALCULATOR','FINANCIAL_AID_PERCENT',
+            'IN_STATE_TUITION','OUT_OF_STATE_TUITION','RETENTION_RATE','GRADUATION_RATE','AVERAGE_SAT_SCORE',
+            'EARNINGS_AFTER_10YRS','SCHOOL_TYPE','PROGRAM_ID','PROGRAM_TYPE_ID'
+    ]
+
+    df_university=df_top_1000[columns]
+
+    success, row_count, total_rows, load_details = write_pandas(conn, df_university, "STAGING_UNIVERSITY")
     if success:
         print("Data successfully loaded into staging_university!")
-    
+
+    update_program_id_query = """
+    MERGE INTO staging_university su
+    USING dim_program p
+    ON su.program_id = p.program_id
+    WHEN MATCHED THEN
+        UPDATE SET su.program_id = p.program_id;
+    """
+    cur.execute(update_program_id_query)
     conn.commit()
+    print("Updated program_id successfully in staging_university.")
+
+    update_program_type_id_query = """
+    MERGE INTO staging_university su
+    USING dim_program_type pt
+    ON su.program_type_id = pt.program_type_id
+    WHEN MATCHED THEN
+        UPDATE SET su.program_type_id = pt.program_type_id;
+    """
+    cur.execute(update_program_type_id_query)
+    conn.commit()
+    print("Updated program_type_id successfully in staging_university.")
+
+
+    # Merge data from staging_university into university
+    merge_query = """
+    MERGE INTO university AS u
+    USING staging_university AS s
+    ON u.school_id = s.school_id  
+    WHEN MATCHED THEN 
+        UPDATE SET 
+            u.name = s.name,
+            u.city = s.city,
+            u.state = s.state,
+            u.school_url = s.school_url,
+            u.admission_rate = s.admission_rate,  
+            u.price_calculator = s.price_calculator,
+            u.in_state_tuition = s.in_state_tuition,
+            u.out_of_state_tuition = s.out_of_state_tuition,
+            u.average_sat_score = s.average_sat_score,
+            u.earnings_after_10yrs = s.earnings_after_10yrs,
+            u.graduation_rate = s.graduation_rate,
+            u.retention_rate = s.retention_rate,
+            u.financial_aid_percent = s.financial_aid_percent,
+            u.program_id = s.program_id,  
+            u.program_type_id = s.program_type_id,  
+            u.school_type = s.school_type
+    WHEN NOT MATCHED THEN
+        INSERT (
+            school_id, name, city, state, school_url,
+            price_calculator, admission_rate,
+            in_state_tuition, out_of_state_tuition, average_sat_score,
+            earnings_after_10yrs, graduation_rate,
+            retention_rate, financial_aid_percent,
+            program_id, program_type_id, school_type
+        ) VALUES (
+            s.school_id, s.name, s.city, s.state, s.school_url,
+            s.price_calculator, s.admission_rate,
+            s.in_state_tuition, s.out_of_state_tuition, s.average_sat_score,
+            s.earnings_after_10yrs, s.graduation_rate,
+            s.retention_rate, s.financial_aid_percent,
+            s.program_id, s.program_type_id, s.school_type
+        );
+    """
+
+    cur.execute(merge_query)
+    conn.commit()  
+
     print("Update and merge operations completed successfully!")
 
 
