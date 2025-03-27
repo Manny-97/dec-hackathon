@@ -164,22 +164,51 @@ def transform_data(**kwargs):
 
 def load_to_snowflake(**kwargs):
     ti = kwargs["ti"]
-    transformed_data_json = ti.xcom_pull(
-        task_ids="transform_data", key="transformed_data"
-    )
-    df = pd.read_json(transformed_data_json)
-
+    transformed_data_json = ti.xcom_pull(task_ids="transform_data", key="transformed_data")
+    df_top_1000 = pd.read_json(transformed_data_json)
+    
     conn = snowflake.connector.connect(
-        user=os.environ.get("SNOWFLAKE_USER"),
-        password=os.environ.get("SNOWFLAKE_PASSWORD"),
-        account=os.environ.get("SNOWFLAKE_ACCOUNT"),
-        warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE"),
-        database=os.environ.get("SNOWFLAKE_DATABASE"),
-        schema=os.environ.get("SNOWFLAKE_SCHEMA"),
+        user='your_username',
+        password='your_password',
+        account='your_account',
+        warehouse='your_warehouse',
+        database='your_database',
+        schema='your_schema'
     )
+    cur = conn.cursor()
+    
+    # Extract unique programs & program types
+    dim_program = df_top_1000[['PROGRAM_NAME']].dropna().drop_duplicates().reset_index(drop=True)
+    dim_program['PROGRAM_ID'] = range(1, len(dim_program) + 1)
+    
+    dim_program_type = df_top_1000[['PROGRAM_TYPE']].dropna().drop_duplicates().reset_index(drop=True)
+    dim_program_type['PROGRAM_TYPE_ID'] = range(1, len(dim_program_type) + 1)
+    
+    # Create dimension tables
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS dim_program (
+            program_id INT AUTOINCREMENT PRIMARY KEY,
+            program_name VARCHAR(255) UNIQUE
+        )
+    """)
+    
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS dim_program_type (
+            program_type_id INT AUTOINCREMENT PRIMARY KEY,
+            program_type VARCHAR(255) UNIQUE
+        )
+    """)
+    print("Dimension tables created")
+    
+    # Load Data into Snowflake
+    from snowflake.connector.pandas_tools import write_pandas
+    success, _, _, _ = write_pandas(conn, df_top_1000, "STAGING_UNIVERSITY")
+    if success:
+        print("Data successfully loaded into staging_university!")
+    
+    conn.commit()
+    print("Update and merge operations completed successfully!")
 
-    write_pandas(conn, df, "COLLEGE_RANKINGS")
-    conn.close()
 
 
 default_args = {
