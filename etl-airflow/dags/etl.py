@@ -168,12 +168,12 @@ def load_to_snowflake(**kwargs):
     df_top_1000 = pd.read_json(transformed_data_json)
     
     conn = snowflake.connector.connect(
-        user='your_username',
-        password='your_password',
-        account='your_account',
-        warehouse='your_warehouse',
-        database='your_database',
-        schema='your_schema'
+        user=os.environ.get("SNOWFLAKE_USER"),
+        password=os.environ.get("SNOWFLAKE_PASSWORD"),
+        account=os.environ.get("SNOWFLAKE_ACCOUNT"),
+        warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE"),
+        database=os.environ.get("SNOWFLAKE_DATABASE"),
+        schema=os.environ.get("SNOWFLAKE_SCHEMA")
     )
     cur = conn.cursor()
     
@@ -324,7 +324,7 @@ def load_to_snowflake(**kwargs):
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "start_date": datetime(2024, 3, 1),
+    "start_date": datetime(2025, 3, 25),
     "retries": 1,
     "retry_delay": timedelta(minutes=5),
 }
@@ -332,7 +332,7 @@ default_args = {
 dag = DAG(
     "college_data_pipeline",
     default_args=default_args,
-    schedule_interval="@daily",
+    schedule_interval="@weekly",
     catchup=False,
 )
 
