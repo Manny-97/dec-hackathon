@@ -43,7 +43,7 @@ UniFinder is a Power BI dashboard designed to help prospective students, parents
 3. **Refresh Data**:
    - Click **Refresh** to load the latest data from Snowflake.
 
-4. **View and Interact with Dashboard on web**: [UniFinder Dashboard](https://app.powerbi.com/view?r=eyJrIjoiZWUyYzljNmMtM2FjMS00ZjllLWIwNjUtMzdjMjRlMjI4ZmRmIiwidCI6IjQzOGFiNWNlLTljODEtNDI0Ni05Yjk4LTI5ZmY3YWQ3ZDBhOSJ9) 
+4. **View and Interact with Dashboard on web**: [UniFinder Dashboard](https://app.fabric.microsoft.com/view?r=eyJrIjoiZGI1NmFlZTYtMTY2Yi00OTRkLWExMGItNTY5NjIwZmJlYWRlIiwidCI6IjNlMDBmYTQzLWMyMzktNDQ4Ni1hOTM1LTU5MmI0ZjRkZGU4MSJ9) 
 
 ---
 
